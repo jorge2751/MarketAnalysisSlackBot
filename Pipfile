@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+flask = "*"
+slack-sdk = "*"
+slack-bolt = "*"
+langchain = "*"
+python-dotenv = "*"
+google-search-results = "*"
+openai = "*"
+beautifulsoup4 = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.11"
