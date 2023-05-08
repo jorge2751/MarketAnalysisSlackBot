@@ -3,7 +3,7 @@ from flask_app.models.first_glance_bot import FirstGlanceBot
 
 def initFirstGlanceBot(text, say):
     
-    # Extract niche, city, and state from the user input
+    # Extract niche, state, and population range from the user input
     try:
         state, niche, min_pop, max_pop = [x.strip() for x in text.split(",")]
     except ValueError:
