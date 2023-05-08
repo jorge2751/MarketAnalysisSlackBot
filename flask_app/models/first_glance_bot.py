@@ -249,28 +249,48 @@ class FirstGlanceBot:
     
     @classmethod
     def decide_to_proceed(cls, map_pack_analysis, organic_analysis, type_and_description_analysis):
-        
-        # city_in_title:more_than_10_reviews:connected_websites:relevant_types = 5:2:1:1
-        title_value = map_pack_analysis['city_in_title'] * 3.5
-        reviews_value = map_pack_analysis['more_than_10_reviews'] * 3.5
-        websites_value = map_pack_analysis['connected_websites'] * 1
-        types_value = type_and_description_analysis.get('relevant_types') * 1
-        map_pack_score = (title_value + reviews_value + websites_value + types_value) / 27 * 100
-        
-        # city_in_title:city_in_link:local_sites = 2:3:5
-        title_value = organic_analysis['city_in_title'] * 2
-        link_value = organic_analysis['city_in_link'] * 3
-        sites_value = type_and_description_analysis.get('local_sites') * 5
-        organic_score = (title_value + link_value + sites_value)
-        
+
+        def calculate_map_pack_score():
+            # Weights: city_in_title:more_than_10_reviews:connected_websites:relevant_types = 4:3:1:1
+            title_weight = 4
+            reviews_weight = 3
+            websites_weight = 1
+            types_weight = 1
+
+            title_value = map_pack_analysis['city_in_title'] * title_weight # max: 12
+            reviews_value = map_pack_analysis['more_than_10_reviews'] * reviews_weight # max: 9
+            websites_value = map_pack_analysis['connected_websites'] * websites_weight # max: 3
+            types_value = type_and_description_analysis.get('relevant_types') * types_weight # max: 3
+
+            # Get score out of 100
+            score = ((title_value + reviews_value + websites_value + types_value) / 27) * 100
+            return score
+            
+        def calculate_organic_score():
+            # Weights: city_in_title:city_in_link:local_sites = 2:3:5
+            title_weight = 2
+            link_weight = 3
+            sites_weight = 5
+
+            title_value = organic_analysis['city_in_title'] * title_weight
+            link_value = organic_analysis['city_in_link'] * link_weight
+            sites_value = type_and_description_analysis.get('local_sites') * sites_weight
+
+            return title_value + link_value + sites_value
+
+        map_pack_score = calculate_map_pack_score()
+        organic_score = calculate_organic_score()
+
         # Get the total competition scores
         map_pack_weight = 0.80
         organic_score_weight = 0.20
-        
+
         total_competition_score = (map_pack_score * map_pack_weight) + (organic_score * organic_score_weight)
 
         # Construct the response
-        report_scores = f"Map Pack Score: {int(map_pack_score)} / 100\nOrganic Score: {int(organic_score)} / 100\nTotal Score: {int(total_competition_score)} / 100\n"
+        report_scores = (f"Map Pack Score: {int(map_pack_score)} / 100\n"
+                        f"Organic Score: {int(organic_score)} / 100\n"
+                        f"Total Score: {int(total_competition_score)} / 100\n")
 
         if total_competition_score < 30:
             return report_scores + "Proceed with the campaign in"
