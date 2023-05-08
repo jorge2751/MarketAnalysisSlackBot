@@ -245,6 +245,8 @@ class FirstGlanceBot:
             Descriptions: {descriptions}
             Count how many 'descriptions' are 'local sites', AKA this website is a business offering {niche} services in the area.
             
+            Local sites have descriptions like this: "___ was first indexed by Google in May 2015", as they are not well versed on SEO and don't have a description of their business. Other times they have: "___ is a landscaping company that offers landscaping services in the area. We are located in the city of 'City Name' and have been in business since 2015."
+            
             Respond with only the number of sites that are 'Local'.
             Example response: '3'
             DO NOT RESPOND INA SENTENCE FORMAT. ONLY RESPOND WITH THE NUMBER.
