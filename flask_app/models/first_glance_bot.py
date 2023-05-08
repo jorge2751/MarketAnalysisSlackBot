@@ -155,56 +155,108 @@ class FirstGlanceBot:
         
         return results
     
-    @classmethod
-    def analyze_types_and_descriptions(cls, map_pack, organic_results, niche):
+    # @classmethod
+    # def analyze_types_and_descriptions(cls, map_pack, organic_results, niche):
         
-        # Filter map pack and organic results
+    #     # Filter map pack and organic results
+    #     types = []
+    #     descriptions = []
+        
+    #     for result in map_pack:
+    #         types.append(result.get('type'))
+            
+    #     for result in organic_results:
+    #         descriptions.append(result.get('description'))
+        
+    #     # Analyze how many types of map pack results and descriptions of organic results match the niche
+    #     llm = OpenAI(model_name="gpt-4", temperature=1)
+        
+    #     prompt = PromptTemplate(
+    #         input_variables=["types", "descriptions", "niche"],
+    #         template="""
+    #         Types: {types}
+    #         Count how many 'types' represent a business that would offer {niche} services.
+            
+    #         Descriptions: {descriptions}
+    #         Count how many 'descriptions' are 'local sites', AKA this website is a business offering {niche} services in the area. 
+            
+    #         Local sites have descriptions like this: "sullivanslandscapingservice.com was first indexed by Google in May 2015", as they are not well versed on SEO and don't have a description of their business. Other times they actually have a description like this: "Sullivan's Landscaping Service is a landscaping company that offers landscaping services in the area. We are located in the city of 'City Name' and have been in business since 2015."
+            
+    #         On the other hand, a directory site like Yelp, that does not offer any local services, would have a description like this: "Yelp Inc. is an American company that develops the Yelp.com website and the Yelp mobile app, which publish crowd-sourced reviews about businesses. It also operates Yelp Guest Manager, a table reservation service. It is headquartered in San Francisco, California."
+            
+    #         Respond with the number of business types that match {niche} and the number of sites that are 'Local' in a python dictionary format, with these key and value pairs:
+    #         example response without brackets (you need to surround your response in curly brackets): relevant_types': 2, 'local_sites': 3
+    #         """
+    #     )
+        
+    #     chain = LLMChain(llm=llm, prompt=prompt)
+        
+    #     response = chain.run(types=types, descriptions=descriptions, niche=niche)
+        
+    #     dict_match = re.search(r"\{.*\}", response)
+    #     if dict_match:
+    #         response_dict_str = dict_match.group(0)
+    #         response_dict = eval(response_dict_str)
+    #         return response_dict
+    #     else:
+    #         raise ValueError("Failed to extract the dictionary from the response.")
+
+    @classmethod
+    def analyze_types(cls, map_pack, niche):
+        
         types = []
-        descriptions = []
         
         for result in map_pack:
             types.append(result.get('type'))
-            
-        for result in organic_results:
-            descriptions.append(result.get('description'))
         
-        # Analyze how many types of map pack results and descriptions of organic results match the niche
-        llm = OpenAI(model_name="gpt-4", temperature=1)
+        llm = OpenAI(model_name="gpt-3.5-turbo", temperature=1)
         
         prompt = PromptTemplate(
-            input_variables=["types", "descriptions", "niche"],
+            input_variables=["types", "niche"],
             template="""
             Types: {types}
             Count how many 'types' represent a business that would offer {niche} services.
             
-            Descriptions: {descriptions}
-            Count how many 'descriptions' are 'local sites', AKA this website is a business offering {niche} services in the area. 
-            
-            Local sites have descriptions like this: "sullivanslandscapingservice.com was first indexed by Google in May 2015", as they are not well versed on SEO and don't have a description of their business. Other times they actually have a description like this: "Sullivan's Landscaping Service is a landscaping company that offers landscaping services in the area. We are located in the city of 'City Name' and have been in business since 2015."
-            
-            On the other hand, a directory site like Yelp, that does not offer any local services, would have a description like this: "Yelp Inc. is an American company that develops the Yelp.com website and the Yelp mobile app, which publish crowd-sourced reviews about businesses. It also operates Yelp Guest Manager, a table reservation service. It is headquartered in San Francisco, California."
-            
-            Respond with the number of business types that match {niche} and the number of sites that are 'Local' in a python dictionary format, with these key and value pairs:
-            example response without brackets (you need to surround your response in curly brackets): relevant_types': 2, 'local_sites': 3
+            Respond with the number of business types that match {niche}.
+            example response: 2
             """
         )
         
         chain = LLMChain(llm=llm, prompt=prompt)
         
-        response = chain.run(types=types, descriptions=descriptions, niche=niche)
+        response = chain.run(types=types, niche=niche)
         
-        dict_match = re.search(r"\{.*\}", response)
-        if dict_match:
-            response_dict_str = dict_match.group(0)
-            response_dict = eval(response_dict_str)
-            return response_dict
-        else:
-            raise ValueError("Failed to extract the dictionary from the response.")
-
+        return response
     
-    #
     @classmethod
-    def prepare_response(cls, map_pack_analysis, organic_analysis, type_and_description_analysis):
+    def analyze_descriptions(cls, organic_results, niche):
+        
+        descriptions = []
+        
+        for result in organic_results:
+            descriptions.append(result.get('description'))
+            
+        llm = OpenAI(model_name="gpt-3.5-turbo", temperature=1)
+        
+        prompt = PromptTemplate(
+            input_variables=["descriptions", "niche"],
+            template="""
+            Descriptions: {descriptions}
+            Count how many 'descriptions' are 'local sites', AKA this website is a business offering {niche} services in the area.
+            
+            Respond with the number of sites that are 'Local'.
+            example response: 3
+            """
+        )
+        
+        chain = LLMChain(llm=llm, prompt=prompt)
+        
+        response = chain.run(descriptions=descriptions, niche=niche)
+        
+        return response
+    
+    @classmethod
+    def prepare_response(cls, map_pack_analysis, organic_analysis, type_analysis, description_analysis):
         
         header = {
             'type': 'section',
@@ -225,7 +277,7 @@ class FirstGlanceBot:
                     f"City in title: {map_pack_analysis['city_in_title']} / 3\n"
                     f"More than 10 reviews: {map_pack_analysis['more_than_10_reviews']} / 3\n"
                     f"Connected websites: {map_pack_analysis['connected_websites']} / 3\n"
-                    f"Relevent types: {type_and_description_analysis['relevant_types']} / 3\n"
+                    f"Relevent types: {type_analysis} / 3\n"
                 )
             }
         }
@@ -238,7 +290,7 @@ class FirstGlanceBot:
                     "*Organic Results (max: 10 competitors):*\n"
                     f"City in title: {organic_analysis['city_in_title']} / 10\n"
                     f"City in link: {organic_analysis['city_in_link']} / 10\n"
-                    f"Local websites: {type_and_description_analysis['local_sites']} / 10\n"
+                    f"Local websites: {description_analysis} / 10\n"
                 )
             }
         }
@@ -248,7 +300,7 @@ class FirstGlanceBot:
         return blocks
     
     @classmethod
-    def decide_to_proceed(cls, map_pack_analysis, organic_analysis, type_and_description_analysis):
+    def decide_to_proceed(cls, map_pack_analysis, organic_analysis, type_analysis, description_analysis):
 
         def calculate_map_pack_score():
             # Weights: city_in_title:more_than_10_reviews:connected_websites:relevant_types = 4:3:1:1
@@ -260,7 +312,7 @@ class FirstGlanceBot:
             title_value = map_pack_analysis['city_in_title'] * title_weight # max: 12
             reviews_value = map_pack_analysis['more_than_10_reviews'] * reviews_weight # max: 9
             websites_value = map_pack_analysis['connected_websites'] * websites_weight # max: 3
-            types_value = type_and_description_analysis.get('relevant_types') * types_weight # max: 3
+            types_value = type_analysis * types_weight # max: 3
 
             # Get score out of 100
             score = ((title_value + reviews_value + websites_value + types_value) / 27) * 100
@@ -274,7 +326,7 @@ class FirstGlanceBot:
 
             title_value = organic_analysis['city_in_title'] * title_weight
             link_value = organic_analysis['city_in_link'] * link_weight
-            sites_value = type_and_description_analysis.get('local_sites') * sites_weight
+            sites_value = description_analysis * sites_weight
 
             return title_value + link_value + sites_value
 

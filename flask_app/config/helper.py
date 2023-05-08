@@ -43,14 +43,15 @@ def initFirstGlanceBot(text, say):
         organic_analysis = FirstGlanceBot.analyze_organic_results(processed_organic_results, city)
         
         # Use FirstGlanceBot to compare niche to types of map pack results and descriptions of organic results
-        type_and_description_analysis = FirstGlanceBot.analyze_types_and_descriptions(processed_map_pack, processed_organic_results, niche)
-
+        type_analysis = FirstGlanceBot.analyze_types(processed_map_pack, niche)
+        description_analysis = FirstGlanceBot.analyze_descriptions(processed_organic_results, niche)
+        
         # Use FirstGlanceBot to prepare the response in table format
-        # table_response = FirstGlanceBot.prepare_response(map_pack_analysis, organic_analysis, type_and_description_analysis)
+        # table_response = FirstGlanceBot.prepare_response(map_pack_analysis, organic_analysis, type_analysis, description_analysis)
         # say(blocks=table_response)
 
         # Use FirstGlanceBot to decide weather or not to proceed with the analysis
-        final_decision = FirstGlanceBot.decide_to_proceed(map_pack_analysis, organic_analysis, type_and_description_analysis)
+        final_decision = FirstGlanceBot.decide_to_proceed(map_pack_analysis, organic_analysis, type_analysis, description_analysis)
         
         say(f"{final_decision} {location}")
     
