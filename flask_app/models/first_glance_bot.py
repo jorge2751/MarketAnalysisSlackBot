@@ -217,8 +217,9 @@ class FirstGlanceBot:
             Types: {types}
             Count how many 'types' represent a business that would offer {niche} services.
             
-            Respond with the number of business types that match {niche}.
-            example response: 2
+            Respond with only the number of business types that match {niche}.
+            example response: '2'
+            DO NOT RESPOND INA SENTENCE FORMAT. ONLY RESPOND WITH THE NUMBER.
             """
         )
         
@@ -244,8 +245,9 @@ class FirstGlanceBot:
             Descriptions: {descriptions}
             Count how many 'descriptions' are 'local sites', AKA this website is a business offering {niche} services in the area.
             
-            Respond with the number of sites that are 'Local'.
-            example response: 3
+            Respond with only the number of sites that are 'Local'.
+            Example response: '3'
+            DO NOT RESPOND INA SENTENCE FORMAT. ONLY RESPOND WITH THE NUMBER.
             """
         )
         

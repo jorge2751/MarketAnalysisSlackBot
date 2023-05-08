@@ -51,7 +51,7 @@ def initFirstGlanceBot(text, say):
         # say(blocks=table_response)
 
         # Use FirstGlanceBot to decide weather or not to proceed with the analysis
-        final_decision = FirstGlanceBot.decide_to_proceed(map_pack_analysis, organic_analysis, type_analysis, description_analysis)
+        final_decision = FirstGlanceBot.decide_to_proceed(map_pack_analysis, organic_analysis, int(type_analysis), int(description_analysis))
         
         say(f"{final_decision} {location}")
     
