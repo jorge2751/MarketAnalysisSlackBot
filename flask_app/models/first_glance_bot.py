@@ -37,7 +37,8 @@ class FirstGlanceBot:
             if city.get("population") >= int(min_pop) and city.get("population") <= int(max_pop):
                 cities.append(city.get("name"))
         
-        return cities
+        # Return last 26 cities in the list
+        return cities[-30:]
     
     # Get search results from SerpApi
     @classmethod
@@ -344,9 +345,7 @@ class FirstGlanceBot:
         total_competition_score = (map_pack_score * map_pack_weight) + (organic_score * organic_score_weight)
 
         # Construct the response
-        report_scores = (f"Map Pack Score: {int(map_pack_score)} / 100\n"
-                        f"Organic Score: {int(organic_score)} / 100\n"
-                        f"Total Score: {int(total_competition_score)} / 100\n")
+        report_scores = (f"Map Pack Score: {int(map_pack_score)} / 100\n")
 
         if total_competition_score < 30:
             return report_scores + "Proceed with the campaign in"
