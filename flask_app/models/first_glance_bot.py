@@ -38,7 +38,7 @@ class FirstGlanceBot:
                 cities.append(city.get("name"))
         
         # Return last 26 cities in the list
-        return cities[-30:]
+        return cities
     
     # Get search results from SerpApi
     @classmethod
@@ -220,7 +220,7 @@ class FirstGlanceBot:
             
             Respond with only the number of business types that match {niche}.
             example response: '2'
-            DO NOT RESPOND INA SENTENCE FORMAT. ONLY RESPOND WITH THE NUMBER.
+            DO NOT RESPOND IN A SENTENCE FORMAT. ONLY RESPOND WITH THE NUMBER.
             """
         )
         
