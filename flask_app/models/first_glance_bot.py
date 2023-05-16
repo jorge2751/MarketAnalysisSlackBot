@@ -251,6 +251,7 @@ class FirstGlanceBot:
             Respond with only the number of sites that are 'Local'.
             Example response: '3'
             DO NOT RESPOND INA SENTENCE FORMAT. ONLY RESPOND WITH THE NUMBER.
+            IF YOU DONT KNOW REPLY WITH '0'
             """
         )
         
