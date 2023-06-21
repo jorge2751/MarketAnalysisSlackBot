@@ -37,7 +37,6 @@ class FirstGlanceBot:
             if city.get("population") >= int(min_pop) and city.get("population") <= int(max_pop):
                 cities.append(city.get("name"))
         
-        # Return last 26 cities in the list
         return cities
     
     # Get search results from SerpApi
